@@ -71,9 +71,10 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # ===== DATABASE (single — reads from .env) =====
 # امسح الكود القديم وحط ده مؤقتاً
 DATABASES = {
-    'default': dj_database_url.parse('postgresql://postgres:CnArXtQLrTUGCTcUQdYicJbddyBIgulg@postgres.railway.internal:5432/railway')
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
 }
-
 # ===== PASSWORD VALIDATION =====
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
