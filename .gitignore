@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.class
+venv/
+.env
+db.sqlite3
+media/
+static/
+gates/
+tracknav/
+slotscript/
+*.pt
+*.jpg
+*.png
+videos/
