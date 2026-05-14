@@ -71,7 +71,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # ===== DATABASE (single — reads from .env) =====
 # امسح الكود القديم وحط ده مؤقتاً
 DATABASES = {
-    'default': dj_database_url.parse('postgresql://postgres:CnArXtQLrTUGCTcUQdYicJbddyBIgulg@switchyard.proxy.rlwy.net:59049/railway')
+    'default': dj_database_url.parse('postgresql://postgres:CnArXtQLrTUGCTcUQdYicJbddyBIgulg@postgres.railway.internal:5432/railway')
 }
 
 # ===== PASSWORD VALIDATION =====
