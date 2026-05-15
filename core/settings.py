@@ -2,12 +2,11 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 from datetime import timedelta
-import dj_database_url
+# import dj_database_url
 
 # Build paths first — before anything else
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load .env file
 load_dotenv(BASE_DIR / '.env')
 
 # ===== SECURITY =====
@@ -15,7 +14,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret-key')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 CAMERA_SECRET_KEY = os.getenv('CAMERA_SECRET_KEY')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # ===== APPS =====
 INSTALLED_APPS = [
@@ -31,7 +30,7 @@ INSTALLED_APPS = [
     'accounts',
     'administration',
     'pgvector',
-    'django_extensions',
+    # 'django_extensions',
 ]
 
 # ===== MIDDLEWARE =====
@@ -39,6 +38,7 @@ MIDDLEWARE = [
   
     'corsheaders.middleware.CorsMiddleware',  # ← must be at the TOP
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -70,11 +70,18 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # ===== DATABASE (single — reads from .env) =====
 # امسح الكود القديم وحط ده مؤقتاً
+# ===== DATABASE (single — reads from .env) =====
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
-    )
+    'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME'),  
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST'), 
+            'PORT': os.getenv('DB_PORT'),           
+    }
 }
+
 # ===== PASSWORD VALIDATION =====
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -109,6 +116,9 @@ USE_TZ = True
 
 # ===== STATIC & MEDIA =====
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
