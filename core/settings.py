@@ -77,11 +77,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # امسح الكود القديم وحط ده مؤقتاً
 # ===== DATABASE (single — reads from .env) =====
 DATABASES = {
-    'default': dj_database_url.config(
-        # This looks for a variable named DATABASE_URL in Railway
-        default=os.getenv('DATABASE_URL'),
-        ssl_require=True  
-    )
+    "default": dj_database_url.config(default=os.getenv("DATABASE_URL"))
 }
 
 # ===== PASSWORD VALIDATION =====
