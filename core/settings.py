@@ -2,7 +2,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 from datetime import timedelta
-# import dj_database_url
+import dj_database_url
 
 # Build paths first — before anything else
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -77,14 +77,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # امسح الكود القديم وحط ده مؤقتاً
 # ===== DATABASE (single — reads from .env) =====
 DATABASES = {
-    'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME'),  
-            'USER': os.getenv('DB_USER'),
-            'PASSWORD': os.getenv('DB_PASSWORD'),
-            'HOST': os.getenv('DB_HOST'), 
-            'PORT': os.getenv('DB_PORT'),           
-    }
+    'default': dj_database_url.config(
+        # This looks for a variable named DATABASE_URL in Railway
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=False  # Start with False for Railway; change to True if you get SSL errors
+    )
 }
 
 # ===== PASSWORD VALIDATION =====
