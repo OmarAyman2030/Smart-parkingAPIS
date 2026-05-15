@@ -80,8 +80,7 @@ DATABASES = {
     'default': dj_database_url.config(
         # This looks for a variable named DATABASE_URL in Railway
         default=os.getenv('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=False  # Start with False for Railway; change to True if you get SSL errors
+        ssl_require=True  
     )
 }
 
