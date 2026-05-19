@@ -7,7 +7,7 @@ import dj_database_url
 # Build paths first — before anything else
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(BASE_DIR / '.env')
+load_dotenv(BASE_DIR / ".env",  override=True)
 
 # ===== SECURITY =====
 SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret-key')
