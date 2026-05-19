@@ -47,10 +47,6 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
 
         delta = exit_ - entry
         total_seconds = delta.total_seconds()
-
-        if total_seconds <= 0:
-            return None
-
         return round(total_seconds / 3600, 2)
 
      return None
