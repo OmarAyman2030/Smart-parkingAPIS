@@ -39,12 +39,6 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
      if obj.exit_time:
         entry = obj.entry_time
         exit_ = obj.exit_time
-
-        if timezone.is_aware(entry) and timezone.is_naive(exit_):
-            exit_ = timezone.make_aware(exit_)
-        elif timezone.is_naive(entry) and timezone.is_aware(exit_):
-            entry = timezone.make_aware(entry)
-
         delta = exit_ - entry
         total_seconds = delta.total_seconds()
         return max(1, math.ceil(total_seconds / 3600))
