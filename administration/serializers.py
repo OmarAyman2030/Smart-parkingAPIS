@@ -34,18 +34,8 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
 
     def get_duration_hours(self, obj):
         if obj.exit_time:
-            entry = obj.entry_time
-            exit_ = obj.exit_time
-
-            if timezone.is_aware(entry) and timezone.is_naive(exit_):
-                exit_ = timezone.make_aware(exit_)
-            elif timezone.is_naive(entry) and timezone.is_aware(exit_):
-                entry = timezone.make_aware(entry)
-
-            delta = exit_ - entry
-            total_seconds = delta.total_seconds()
-
-            return round(total_seconds / 3600, 2)
+            delta = obj.exit_time - obj.entry_time
+            return round(delta.total_seconds() / 3600, 2)
         return None  # Still inside
     
     def get_fees(self, obj):
