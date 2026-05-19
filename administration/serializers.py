@@ -36,7 +36,7 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
     #     return None  # Still inside
 
     def get_duration_hours(self, obj):
-     if obj.exit_time and obj.entry_time:
+     if obj.exit_time:
         entry = obj.entry_time
         exit_ = obj.exit_time
 
@@ -47,8 +47,7 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
 
         delta = exit_ - entry
         total_seconds = delta.total_seconds()
-        return round(total_seconds / 3600, 2)
-
+        return max(1, math.ceil(total_seconds / 3600))
      return None
     
     def get_billed_hours(self, obj):
