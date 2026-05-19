@@ -26,8 +26,14 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
             'exit_image_url',
         ]
 
-    def get_duration_hours_h(self, obj):
-        if obj.exit_time and obj.entry_time:
+    # def get_duration_hours(self, obj):
+    #     if obj.exit_time:
+    #         delta = obj.exit_time - obj.entry_time
+    #         return round(delta.total_seconds() / 3600, 2)
+    #     return None  # Still inside
+
+    def get_duration_hours(self, obj):
+        if obj.exit_time:
             entry = obj.entry_time
             exit_ = obj.exit_time
 
@@ -38,9 +44,6 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
 
             delta = exit_ - entry
             total_seconds = delta.total_seconds()
-
-            if total_seconds <= 0:
-                return None
 
             return round(total_seconds / 3600, 2)
         return None  # Still inside
@@ -65,6 +68,11 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
             return billed_hours * 30
         return 0.0
 
+    def get_entry_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.entry_image and request:
+            return request.build_absolute_uri(obj.entry_image.url)
+        return None
 
     def get_exit_image_url(self, obj):
         request = self.context.get('request')
