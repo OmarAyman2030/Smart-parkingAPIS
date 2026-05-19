@@ -7,6 +7,8 @@ from django.utils import timezone
 
 class AdminVehicleLogSerializer(serializers.ModelSerializer):
     duration_hours = serializers.SerializerMethodField()
+    total_fee = serializers.SerializerMethodField()
+    billed_hours = serializers.SerializerMethodField()
     entry_image_url = serializers.SerializerMethodField()
     exit_image_url = serializers.SerializerMethodField()
     slot_number = serializers.CharField(source='slot.slot_number', read_only=True)
@@ -21,49 +23,55 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
             'exit_time',
             'duration_hours',
             'total_fee',
+            'billed_hours',
             'is_paid',
             'entry_image_url',
             'exit_image_url',
         ]
 
+    # def get_duration_hours(self, obj):
+    #     if obj.exit_time:
+    #         delta = obj.exit_time - obj.entry_time
+    #         return round(delta.total_seconds() / 3600, 2)
+    #     return None  # Still inside
+
     def get_duration_hours(self, obj):
+     if obj.exit_time and obj.entry_time:
+        entry = obj.entry_time
+        exit_ = obj.exit_time
+
+        if timezone.is_aware(entry) and timezone.is_naive(exit_):
+            exit_ = timezone.make_aware(exit_)
+        elif timezone.is_naive(entry) and timezone.is_aware(exit_):
+            entry = timezone.make_aware(entry)
+
+        delta = exit_ - entry
+        total_seconds = delta.total_seconds()
+
+        if total_seconds <= 0:
+            return None
+
+        return round(total_seconds / 3600, 2)
+
+     return None
+    
+    def get_billed_hours(self, obj):
         if obj.exit_time and obj.entry_time:
-            entry = obj.entry_time
-            exit_ = obj.exit_time
-
-            if timezone.is_aware(entry) and timezone.is_naive(exit_):
-                exit_ = timezone.make_aware(exit_)
-            elif timezone.is_naive(entry) and timezone.is_aware(exit_):
-                entry = timezone.make_aware(entry)
-
-            delta = exit_ - entry
+            delta = obj.exit_time - obj.entry_time
             total_seconds = delta.total_seconds()
 
             if total_seconds <= 0:
                 return None
 
-            return round(total_seconds / 3600, 2)
-        return None  # Still inside
+            return max(1, math.ceil(total_seconds / 3600))
+
+        return None
     
-    def get_fees(self, obj):
-        if obj.exit_time and obj.entry_time:
-            entry = obj.entry_time
-            exit_ = obj.exit_time
-
-            if timezone.is_aware(entry) and timezone.is_naive(exit_):
-                exit_ = timezone.make_aware(exit_)
-            elif timezone.is_naive(entry) and timezone.is_aware(exit_):
-                entry = timezone.make_aware(entry)
-
-            delta = exit_ - entry
-            total_seconds = delta.total_seconds()
-
-            if total_seconds <= 0:
-                return 0.0
-
-            billed_hours = math.ceil(total_seconds / 3600)
-            return billed_hours * 30
-        return 0.0
+    def get_total_fee(self, obj):
+        billed = self.get_billed_hours(obj)
+        if billed is None:
+            return 0
+        return billed * 30  # Assuming 30 EGP per hour
 
     def get_entry_image_url(self, obj):
         request = self.context.get('request')
