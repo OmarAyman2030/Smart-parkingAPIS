@@ -26,7 +26,7 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
             'exit_image_url',
         ]
 
-    def get_duration_hours(self, obj):
+    def get_duration_hours_h(self, obj):
         if obj.exit_time and obj.entry_time:
             entry = obj.entry_time
             exit_ = obj.exit_time
@@ -45,7 +45,7 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
             return round(total_seconds / 3600, 2)
         return None  # Still inside
     
-    def get_fee(self, obj):
+    def get_fees(self, obj):
         if obj.exit_time and obj.entry_time:
             entry = obj.entry_time
             exit_ = obj.exit_time
