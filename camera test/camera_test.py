@@ -4,9 +4,9 @@ import requests
 SECRET_KEY = "my_ultra_secure_camera_token_2026"
 HEADERS = {'X-Camera-Key': SECRET_KEY}
 
-URL_ENTRY = "http://127.0.0.1:8000/api/entry/"
-URL_EXIT = "http://127.0.0.1:8000/api/exit/"
-URL_SLOTS = "http://127.0.0.1:8000/api/slots/update/"
+URL_ENTRY = "https://smart-parkingapis-production.up.railway.app/api/entry/"
+URL_EXIT = "https://smart-parkingapis-production.up.railway.app/api/exit/"
+URL_SLOTS = "https://smart-parkingapis-production.up.railway.app/api/slots/update/"
 
 
 def simulate_camera_entry(image_path, plate_number):
