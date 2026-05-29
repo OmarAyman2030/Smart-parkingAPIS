@@ -10,9 +10,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env",  override=True)
 
 # ===== SECURITY =====
+CAMERA_SECRET_KEY = os.getenv('CAMERA_SECRET_KEY') 
 SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret-key')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-CAMERA_SECRET_KEY = os.getenv('CAMERA_SECRET_KEY')
 
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = [
