@@ -786,11 +786,7 @@ async function loadLogs() {
           <td>${l.slot_number || '—'}</td>
           <td>${new Date(l.entry_time).toLocaleString('en-US',{hour:'2-digit',minute:'2-digit',month:'short',day:'numeric'})}</td>
           <td>${l.exit_time ? new Date(l.exit_time).toLocaleString('en-US',{hour:'2-digit',minute:'2-digit',month:'short',day:'numeric'}) : '—'}</td>
-          <td>
-  ${l.duration_hours != null
-    ? `${l.duration_hours}h (Bill: ${l.billed_hours}h)`
-    : '—'}
-</td>
+          <td>${l.duration_hours != null ? l.duration_hours + 'h' : '—'}</td>
           <td>${l.total_fee != null ? l.total_fee + ' EGP' : '—'}</td>
           <td>${l.is_paid ? '<span class="pill pill-green">Paid</span>' : (l.exit_time ? '<span class="pill pill-red">Unpaid</span>' : '<span class="pill pill-amber">Inside</span>')}</td>
           <td style="display:flex;gap:4px;">

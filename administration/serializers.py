@@ -36,42 +36,43 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
     #     return None  # Still inside
 
     def get_duration_hours(self, obj):
-     if obj.exit_time and obj.entry_time:
-        entry = obj.entry_time
-        exit_ = obj.exit_time
+        if obj.exit_time and obj.entry_time:
+            entry = obj.entry_time
+            exit_ = obj.exit_time
 
-        if timezone.is_aware(entry) and timezone.is_naive(exit_):
-            exit_ = timezone.make_aware(exit_)
-        elif timezone.is_naive(entry) and timezone.is_aware(exit_):
-            entry = timezone.make_aware(entry)
+            if timezone.is_aware(entry) and timezone.is_naive(exit_):
+                exit_ = timezone.make_aware(exit_)
+            elif timezone.is_naive(entry) and timezone.is_aware(exit_):
+                entry = timezone.make_aware(entry)
 
-        delta = exit_ - entry
-        total_seconds = delta.total_seconds()
+            delta = exit_ - entry
+            total_seconds = delta.total_seconds()
 
         if total_seconds <= 0:
             return None
 
-        return round(total_seconds / 3600, 2)
-
-     return None
+            return round(total_seconds / 3600, 2)
+        return None  # Still inside
     
-    def get_billed_hours(self, obj):
+    def get_fees(self, obj):
         if obj.exit_time and obj.entry_time:
-            delta = obj.exit_time - obj.entry_time
+            entry = obj.entry_time
+            exit_ = obj.exit_time
+
+            if timezone.is_aware(entry) and timezone.is_naive(exit_):
+                exit_ = timezone.make_aware(exit_)
+            elif timezone.is_naive(entry) and timezone.is_aware(exit_):
+                entry = timezone.make_aware(entry)
+
+            delta = exit_ - entry
             total_seconds = delta.total_seconds()
 
             if total_seconds <= 0:
-                return None
+                return 0.0
 
-            return max(1, math.ceil(total_seconds / 3600))
-
-        return None
-    
-    def get_total_fee(self, obj):
-        billed = self.get_billed_hours(obj)
-        if billed is None:
-            return 0
-        return billed * 30  # Assuming 30 EGP per hour
+            billed_hours = math.ceil(total_seconds / 3600)
+            return billed_hours * 30
+        return 0.0
 
     def get_entry_image_url(self, obj):
         request = self.context.get('request')
