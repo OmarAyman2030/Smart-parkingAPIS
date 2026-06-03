@@ -36,13 +36,12 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
     #     return None  # Still inside
 
     def get_duration_hours(self, obj):
-        if not obj.entry_time or not obj.exit_time:
-            return None  # Still inside or missing data
-
+        if not obj.exit_time or not obj.entry_time:
+           return None
+        
         entry = obj.entry_time
         exit_ = obj.exit_time
 
-        # Timezone normalization logic (Keep this exactly as you had it)
         if timezone.is_aware(entry) and timezone.is_naive(exit_):
             exit_ = timezone.make_aware(exit_)
         elif timezone.is_naive(entry) and timezone.is_aware(exit_):
@@ -51,31 +50,26 @@ class AdminVehicleLogSerializer(serializers.ModelSerializer):
         delta = exit_ - entry
         total_seconds = delta.total_seconds()
 
-        # If calculation results in 0 or negative time, return None
         if total_seconds <= 0:
             return None
         
         return round(total_seconds / 3600, 2)
     
-    def get_fees(self, obj):
-        if obj.exit_time and obj.entry_time:
-            entry = obj.entry_time
-            exit_ = obj.exit_time
+    def get_billed_hours(self, obj):
+        if not obj.exit_time:
+           return None
 
-            if timezone.is_aware(entry) and timezone.is_naive(exit_):
-                exit_ = timezone.make_aware(exit_)
-            elif timezone.is_naive(entry) and timezone.is_aware(exit_):
-                entry = timezone.make_aware(entry)
+        delta = obj.exit_time - obj.entry_time
 
-            delta = exit_ - entry
-            total_seconds = delta.total_seconds()
+        hours = math.ceil(delta.total_seconds() / 3600)
 
-            if total_seconds <= 0:
-                return 0.0
-
-            billed_hours = math.ceil(total_seconds / 3600)
-            return billed_hours * 30
-        return 0.0
+        return max(hours, 0)
+    
+    def get_total_fee(self, obj):
+        billed_hours = self.get_billed_hours(obj)
+        if billed_hours is None:
+            return 0
+        return billed_hours * 30  # Assuming $30 per hour
 
     def get_entry_image_url(self, obj):
         request = self.context.get('request')
